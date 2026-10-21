@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CWSC - Calgary Wastewater Service & Compliance</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            600: '#0F417B',
+                            700: '#0c3563',
+                            800: '#09294f',
+                            900: '#061c36',
+                            navy: '#0F417B',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"TT Commons Pro"', 'Inter', 'sans-serif'],
+                        heading: ['Futura', '"Futura Condensed"', 'Arial', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+        /* Apply Futura bold to headings globally */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: Futura, "Futura Condensed", Arial, sans-serif !important;
+            font-weight: bold !important;
+        }
+    </style>
+</head>
+<body class="bg-white text-slate-800 font-sans antialiased selection:bg-[#0F417B] selection:text-white">
+
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 transition-all duration-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                
+                <!-- Brand Logo -->
+                <a href="#" class="flex items-center group">
+                    <img src="images/Logo-2.png" 
+                         alt="CWSC Calgary Wastewater Service & Compliance Logo" 
+                         class="h-16 sm:h-20 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
+                         onerror="this.src='images/Logo-2.png'">
+                </a>
+
+                <!-- Desktop Navigation Links -->
+                <nav class="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-600">
+                    <a href="#about" class="hover:text-[#0F417B] transition-colors">What We Do</a>
+                    <a href="#services" class="hover:text-[#0F417B] transition-colors">Services</a>
+                    <a href="#contact" class="hover:text-[#0F417B] transition-colors">Contact Us</a>
+                </nav>
+
+                <!-- Header CTA Button -->
+                <div class="hidden md:flex items-center">
+                    <a href="#contact" style="background-color: #8BA38D;" class="hover:opacity-90 text-white font-semibold px-5 py-2.5 shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-2 text-sm">
+                        <i class="fa-regular fa-calendar-check"></i>
+                        <span>Schedule Visit</span>
+                    </a>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-button" type="button" class="text-slate-600 hover:text-slate-900 focus:outline-none p-2" aria-label="Toggle menu">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Drawer -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-slate-200 px-4 pt-2 pb-6 space-y-3">
+            <a href="#about" class="block px-3 py-2 text-base font-medium text-slate-700 hover:bg-slate-100">What We Do</a>
+            <a href="#services" class="block px-3 py-2 text-base font-medium text-slate-700 hover:bg-slate-100">Services</a>
+            <a href="#contact" class="block px-3 py-2 text-base font-medium text-slate-700 hover:bg-slate-100">Contact Us</a>
+            <a href="#contact" style="background-color: #8BA38D;" class="block w-full text-center text-white font-semibold py-3 shadow mt-4">Schedule Visit</a>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section (Left-aligned text with side gradient) -->
+        <section class="relative w-full h-[550px] flex items-center overflow-hidden bg-slate-900">
+            <!-- Background Image -->
+            <div class="absolute inset-0 z-0">
+                <img src="images/restcafe.jpg" 
+                     alt="Kitchen Wastewater Operations" 
+                     class="w-full h-full object-cover scale-105"
+                     onerror="this.src='https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=2000&q=80'">
+            </div>
+
+            <!-- Soft Left-Side Gradient Overlay (Keeps right side of image clear) -->
+            <div class="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/50 to-transparent z-1"></div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+                <div class="max-w-2xl space-y-6 text-left">
+                    
+                    <!-- Badge -->
+                    <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-500/20 border border-blue-400/30 text-blue-200 text-xs sm:text-sm font-semibold backdrop-blur-md shadow-lg">
+                        <i class="fa-solid fa-shield-halved text-blue-400"></i>
+                        <span>Calgary Wastewater Compliance Partner</span>
+                    </div>
+                    
+                    <!-- Main Heading -->
+                    <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight drop-shadow-md">
+                        Guaranteed <br>
+                        Grease Trap Compliance
+                    </h1>
+                    
+                    <!-- Subtitle -->
+                    <p class="text-base sm:text-lg text-slate-200 max-w-xl font-normal leading-relaxed drop-shadow">
+                        Avoid $1,500 kitchen fines. We handle full city wastewater compliance and professional cleanouts for you.
+                    </p>
+
+                    <!-- CTAs -->
+                    <div class="pt-2 flex flex-col sm:flex-row items-start gap-4">
+                        <a href="#contact" style="background-color: #8BA38D;" class="w-full sm:w-auto hover:opacity-90 text-white font-bold px-7 py-3.5 shadow-2xl transition-all text-center text-sm">
+                            Schedule Inspection & Cleanout
+                        </a>
+                        <a href="#services" class="w-full sm:w-auto bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white font-semibold px-7 py-3.5 shadow-lg transition-all text-center text-sm">
+                            View Pricing Plans
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- 'What We Do' Section -->
+        <section id="about" class="py-20 bg-white border-b border-slate-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <div class="text-center space-y-4 max-w-3xl mx-auto">
+                    <span class="text-black font-bold uppercase tracking-wider text-xs sm:text-sm">What We Do</span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+                        Complete Wastewater Management & Compliance
+                    </h2>
+                    <div class="w-16 h-1 bg-[#0F417B] mx-auto"></div>
+                </div>
+
+                <!-- Grid Layout incorporating the 2 Images and Content -->
+                <div class="mt-16 grid lg:grid-cols-12 gap-12 items-center">
+                    
+                    <!-- Left Images Collage -->
+                    <div class="lg:col-span-5 grid grid-cols-2 gap-4">
+                        <div class="relative overflow-hidden shadow-xl border border-slate-200 group h-64 sm:h-80 bg-white">
+                            <img src="images/greasetrap.jpg" 
+                                 alt="Clean Cafe Kitchen" 
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                 onerror="this.src='https://placehold.co/600x800/f8fafc/0f172a?text=Cafe+Interior'">
+                        </div>
+
+                        <div class="relative overflow-hidden shadow-xl border border-slate-200 group h-64 sm:h-80 mt-8 bg-white">
+                            <img src="images/inspector.jpg" 
+                                 alt="Professional Kitchen Maintenance" 
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                 onerror="this.src='https://placehold.co/600x800/f8fafc/0f172a?text=Service+Technician'">
+                        </div>
+                    </div>
+
+                    <!-- Right Main Content Block & Features -->
+                    <div class="lg:col-span-7 space-y-8">
+                        <!-- Clean card without the background gradient glow -->
+                        <div class="bg-white p-8 sm:p-10 border border-slate-200 shadow-xl relative overflow-hidden">
+                            <p class="text-lg sm:text-xl text-slate-700 font-medium leading-relaxed relative z-10">
+                                We provide <span class="text-slate-900 font-bold underline decoration-[#0F417B] decoration-2">reliable grease trap cleaning</span> backed by complete, full regulatory compliance reporting and digital record-keeping. We handle the dirty work and the paperwork.
+                            </p>
+                        </div>
+                        
+                        <div class="grid sm:grid-cols-3 gap-4 text-center">
+                            <div class="p-4 bg-white shadow-sm border border-slate-200">
+                                <div class="w-10 h-10 bg-[#0F417B]/10 text-[#0F417B] flex items-center justify-center mx-auto mb-3">
+                                    <i class="fa-solid fa-shield-halved text-xl"></i>
+                                </div>
+                                <h3 class="font-bold text-slate-900 text-sm">Guaranteed Compliance</h3>
+                                <p class="text-xs text-slate-500 mt-1">Strict adherence to Calgary Bylaw standards</p>
+                            </div>
+
+                            <div class="p-4 bg-white shadow-sm border border-slate-200">
+                                <div class="w-10 h-10 bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-3">
+                                    <i class="fa-solid fa-face-smile text-xl"></i>
+                                </div>
+                                <h3 class="font-bold text-slate-900 text-sm">Zero Headache</h3>
+                                <p class="text-xs text-slate-500 mt-1">We take care of scheduling & maintenance</p>
+                            </div>
+
+                            <div class="p-4 bg-white shadow-sm border border-slate-200">
+                                <div class="w-10 h-10 bg-[#0F417B]/10 text-[#0F417B] flex items-center justify-center mx-auto mb-3">
+                                    <i class="fa-solid fa-inbox text-xl"></i>
+                                </div>
+                                <h3 class="font-bold text-slate-900 text-sm">Audit-Ready Records</h3>
+                                <p class="text-xs text-slate-500 mt-1">Digital manifests certified by the City of Calgary</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 'Our Services' Section -->
+        <section id="services" class="py-20 bg-white border-b border-slate-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <div class="text-center max-w-3xl mx-auto space-y-4 mb-12">
+                    <span class="text-black font-bold uppercase tracking-wider text-xs sm:text-sm">Pricing</span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+                        Our Services
+                    </h2>
+                    <div class="w-16 h-1 bg-[#0F417B] mx-auto"></div>
+                </div>
+
+                <!-- 6 Service Cards Grid -->
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    
+                    <!-- Service 1 (Highlighted as Most Popular) -->
+                    <div class="bg-white p-6 border-2 border-[#0F417B] shadow-md flex flex-col justify-between relative">
+                        <div class="absolute -top-3 right-6 bg-[#0F417B] text-white text-[10px] font-bold px-3 py-0.5 uppercase tracking-wider shadow">
+                            Most Popular
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900 leading-snug mb-3">
+                                Grease Trap & Compliance Bundle (Under 200L)
+                            </h3>
+                            <p class="text-sm text-slate-500 leading-relaxed">
+                                Includes full grease trap maintenance & certification, compliance management portal, digital manifest generation & city inspector support.
+                            </p>
+                        </div>
+                        <div class="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between">
+                            <span class="bg-slate-100 text-slate-700 text-xs font-semibold px-3 py-1">
+                                Every 4 Weeks (Recurring)*
+                            </span>
+                            <span class="text-2xl font-extrabold text-[#0F417B]">$255</span>
+                        </div>
+                    </div>
+
+                    <!-- Service 2 -->
+                    <div class="bg-white p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900 leading-snug mb-3">
+                                Digital Compliance Portal & Management
+                            </h3>
+                            <p class="text-sm text-slate-500 leading-relaxed">
+                                Automated digital manifests, 2-year audit archive & City of Calgary inspector support.
+                            </p>
+                        </div>
+                        <div class="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between">
+                            <span class="bg-slate-100 text-slate-700 text-xs font-semibold px-3 py-1">
+                                Monthly
+                            </span>
+                            <span class="text-2xl font-extrabold text-[#0F417B]">$50</span>
+                        </div>
+                    </div>
+
+                    <!-- Service 3 -->
+                    <div class="bg-white p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900 leading-snug mb-3">
+                                Hydro Jetting Line Maintenance
+                            </h3>
+                            <p class="text-sm text-slate-500 leading-relaxed">
+                                Pipe line clearing and grease breakdown.
+                            </p>
+                        </div>
+                        <div class="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between">
+                            <span class="bg-slate-100 text-slate-700 text-xs font-semibold px-3 py-1">
+                                4x Yearly
+                            </span>
+                            <span class="text-2xl font-extrabold text-[#0F417B]">$150</span>
+                        </div>
+                    </div>
+
+                    <!-- Service 4 -->
+                    <div class="bg-white p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900 leading-snug mb-3">
+                                Historical Manifest Digitization
+                            </h3>
+                            <p class="text-sm text-slate-500 leading-relaxed">
+                                Manifest Digitization & 2-year compliance audit archive (up to 24 records).
+                            </p>
+                        </div>
+                        <div class="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between">
+                            <span class="bg-slate-100 text-slate-700 text-xs font-semibold px-3 py-1">
+                                One-Time Setup
+                            </span>
+                            <span class="text-2xl font-extrabold text-[#0F417B]">$300</span>
+                        </div>
+                    </div>
+
+                    <!-- Service 5 -->
+                    <div class="bg-white p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900 leading-snug mb-3">
+                                Off-Schedule / Ad-Hoc Emergency Cleanout
+                            </h3>
+                            <p class="text-sm text-slate-500 leading-relaxed">
+                                Emergency grease trap servicing.
+                            </p>
+                        </div>
+                        <div class="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between">
+                            <span class="bg-slate-100 text-slate-700 text-xs font-semibold px-3 py-1">
+                                As Requested
+                            </span>
+                            <span class="text-2xl font-extrabold text-[#0F417B]">$450</span>
+                        </div>
+                    </div>
+
+                    <!-- Service 6 -->
+                    <div class="bg-white p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900 leading-snug mb-3">
+                                Additional Grease Trap
+                            </h3>
+                            <p class="text-sm text-slate-500 leading-relaxed">
+                                Any additional grease interceptor for the same location.
+                            </p>
+                        </div>
+                        <div class="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between">
+                            <span class="bg-slate-100 text-slate-700 text-xs font-semibold px-3 py-1">
+                                Must be booked during main cleaning
+                            </span>
+                            <span class="text-2xl font-extrabold text-[#0F417B]">$150</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Footnote line -->
+                <div class="mt-8 text-slate-500 text-xs italic">
+                    *OR triggered automatically whenever total FOG/solids accumulation reaches or exceeds the mandatory 25% threshold (Calgary Wastewater Bylaw 14M2012).
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-20 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <div class="text-center max-w-2xl mx-auto mb-16 space-y-4">
+                    <span class="text-black font-bold uppercase tracking-wider text-xs sm:text-sm">Get In Touch</span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-1">Contact Us & Schedule Visit</h2>
+                    <div class="w-16 h-1 bg-[#0F417B] mx-auto"></div>
+                </div>
+
+                <div class="grid lg:grid-cols-12 gap-12 items-center">
+                    
+                    <!-- Contact Cards -->
+                    <div class="lg:col-span-5 space-y-6">
+                        <div class="bg-white p-6 border border-slate-200 shadow-sm flex items-center gap-5">
+                            <div class="w-14 h-14 bg-[#0F417B]/10 text-[#0F417B] flex items-center justify-center text-2xl shrink-0">
+                                <i class="fa-solid fa-phone"></i>
+                            </div>
+                            <div>
+                                <div class="text-xs font-semibold text-slate-400 uppercase">Phone</div>
+                                <a href="tel:+15873300977" class="text-lg sm:text-xl font-bold text-slate-900 hover:text-[#0F417B] transition-colors">
+                                    +1 (587) 330-0977
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-6 border border-slate-200 shadow-sm flex items-center gap-5">
+                            <div class="w-14 h-14 bg-[#0F417B]/10 text-[#0F417B] flex items-center justify-center text-2xl shrink-0">
+                                <i class="fa-solid fa-envelope"></i>
+                            </div>
+                            <div>
+                                <div class="text-xs font-semibold text-slate-400 uppercase">Email</div>
+                                <a href="mailto:calgarywastewater@gmail.com" class="text-lg sm:text-xl font-bold text-slate-900 hover:text-[#0F417B] transition-colors break-all">
+                                    calgarywastewater@gmail.com
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-6 border border-slate-200 shadow-sm flex items-center gap-5">
+                            <div class="w-14 h-14 bg-[#0F417B]/10 text-[#0F417B] flex items-center justify-center text-2xl shrink-0">
+                                <i class="fa-solid fa-location-dot"></i>
+                            </div>
+                            <div>
+                                <div class="text-xs font-semibold text-slate-400 uppercase">Location</div>
+                                <div class="text-lg font-bold text-slate-900">
+                                    Calgary, Alberta
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Scheduling Button Card -->
+                    <div class="lg:col-span-7 bg-white p-8 sm:p-12 border border-slate-200 shadow-xl text-center space-y-6">
+                        <div class="w-16 h-16 bg-[#0F417B]/10 text-[#0F417B] flex items-center justify-center text-3xl mx-auto shadow-sm">
+                            <i class="fa-regular fa-calendar-check"></i>
+                        </div>
+                        <div class="space-y-2">
+                            <h3 class="text-2xl font-bold text-slate-900">Ready to Book Your Service?</h3>
+                            <p class="text-slate-600 text-sm max-w-md mx-auto">
+                                Click below to pick a date and time that works best for your commercial kitchen inspection and cleanout.
+                            </p>
+                        </div>
+                        <div class="pt-2">
+                            <a href="#" target="_blank" rel="noopener noreferrer" style="background-color: #8BA38D;" class="inline-flex items-center justify-center gap-3 w-full sm:w-auto hover:opacity-90 text-white font-bold py-4 px-8 shadow-lg transition-all text-sm uppercase tracking-wider">
+                                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+                                <span>Schedule Visit</span>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 pt-16 pb-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-slate-800">
+                
+                <!-- Col 1: Brand -->
+                <div class="space-y-4">
+                    <a href="#">
+                        <img src="images/Logo-2.png" 
+                             alt="CWSC Calgary Wastewater Service & Compliance Logo" 
+                             class="h-20 w-auto object-contain brightness-0 invert"
+                             onerror="this.src='images/Logo-2.png'">
+                    </a>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Calgary Wastewater Service & Compliance. Complete grease trap cleaning, compliance management, and digital manifest archiving.
+                    </p>
+                </div>
+
+                <!-- Col 2: Navigation Links -->
+                <div>
+                    <h4 class="text-sm font-bold text-white uppercase tracking-wider mb-1">About</h4>
+                    <div class="w-10 h-0.5 bg-[#0F417B] mb-4"></div>
+                    <ul class="space-y-2.5 text-xs">
+                        <li><a href="#about" class="hover:text-white transition-colors">What We Do</a></li>
+                        <li><a href="#services" class="hover:text-white transition-colors">Contact Us</a></li>
+                        <li><a href="#contact" class="hover:text-white transition-colors">Schedule Visit</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 3: Services List -->
+                <div>
+                    <h4 class="text-sm font-bold text-white uppercase tracking-wider mb-1">Services</h4>
+                    <div class="w-10 h-0.5 bg-[#0F417B] mb-4"></div>
+                    <ul class="space-y-2.5 text-xs">
+                        <li><a href="#services" class="hover:text-white transition-colors">Grease Trap & Compliance</a></li>
+                        <li><a href="#services" class="hover:text-white transition-colors">Digital Compliance Portal</a></li>
+                        <li><a href="#services" class="hover:text-white transition-colors">Alignment/HydroJetting</a></li>
+                        <li><a href="#services" class="hover:text-white transition-colors">Historical Digitization</a></li>
+                        <li><a href="#services" class="hover:text-white transition-colors">Emergency Cleanout</a></li>
+                        <li><a href="#services" class="hover:text-white transition-colors">Additional Interceptor Add-on</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 4: Contact Info -->
+                <div>
+                    <h4 class="text-sm font-bold text-white uppercase tracking-wider mb-1">Contact Info</h4>
+                    <div class="w-10 h-0.5 bg-[#0F417B] mb-4"></div>
+                    <ul class="space-y-3 text-xs">
+                        <li class="flex items-center gap-2">
+                            <i class="fa-solid fa-phone text-[#0F417B]"></i>
+                            <span>+1 (587) 330-0977</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fa-solid fa-envelope text-[#0F417B]"></i>
+                            <span class="break-all">calgarywastewater@gmail.com</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fa-solid fa-location-dot text-[#0F417B]"></i>
+                            <span>37 Richard Way SW, Calgary, AB</span>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <!-- Bottom Footer Bar -->
+            <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+                <p>&copy; 2026 CWSC Calgary Wastewater Service & Compliance. All rights reserved.</p>
+                <a href="#" class="inline-flex items-center gap-2 text-[#0F417B] hover:text-[#0F417B]/80 font-semibold transition-colors">
+                    <span>Return to top</span>
+                    <i class="fa-solid fa-arrow-up"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Interactive Script -->
+    <script>
+        // Mobile Navigation Toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Close mobile menu when clicking any navigation link
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+    </script>
+</body>
+</html>
