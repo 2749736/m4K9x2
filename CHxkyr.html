@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FOG Compliance Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen">
+
+    <!-- Top Action Toolbar -->
+    <header class="bg-slate-900 text-white shadow-md print:hidden">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-xl font-bold tracking-tight">FOG Compliance Dashboard</h1>
+                <p class="text-xs text-slate-400">Single-Trap Commercial Interceptor Ledger</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="generateMunicipalAuditPDF()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-1.5 rounded text-sm font-medium transition">
+                    🖨️ Municipal Audit PDF / Print
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-8 space-y-6">
+
+        <!-- Business Profile Header -->
+        <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Business Name</span>
+                    <h2 id="bizName" class="text-lg font-bold text-slate-900 mt-0.5">Loading...</h2>
+                    <p id="bizAddress" class="text-sm text-slate-600 mt-1">--</p>
+                </div>
+                <div>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Contact Information</span>
+                    <p id="bizPhone" class="text-sm font-medium text-slate-900 mt-0.5">--</p>
+                    <p id="bizEmail" class="text-sm text-slate-600">--</p>
+                </div>
+                <div>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Primary Contact Person</span>
+                    <p id="bizContact" class="text-sm font-semibold text-slate-900 mt-0.5">--</p>
+                </div>
+                <div>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Business License</span>
+                    <p id="bizLicense" class="text-sm font-mono font-bold text-blue-600 mt-0.5">--</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3 Streamlined KPI Cards -->
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Compliance Status</p>
+                    <div class="flex items-center gap-2 mt-2">
+                        <span id="kpiStatusBadge" class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">COMPLIANT</span>
+                        <span class="text-xs font-medium text-slate-600">Main Interceptor (1/1 Trap)</span>
+                    </div>
+                </div>
+                <div class="p-3 bg-emerald-50 text-emerald-600 rounded-lg text-xl">🛡️</div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Last Service Date</p>
+                    <p id="kpiLastDate" class="text-xl font-bold text-slate-900 mt-1">--</p>
+                    <p id="kpiHaulerSub" class="text-xs text-slate-500 mt-0.5">Hauler: --</p>
+                </div>
+                <div class="p-3 bg-blue-50 text-blue-600 rounded-lg text-xl">📅</div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Next Service Due</p>
+                    <p id="kpiNextDate" class="text-xl font-bold text-slate-900 mt-1">--</p>
+                    <p id="kpiDueSub" class="text-xs text-amber-600 font-medium mt-0.5">Scheduled</p>
+                </div>
+                <div class="p-3 bg-amber-50 text-amber-600 rounded-lg text-xl">⏰</div>
+            </div>
+        </section>
+
+        <!-- Service Ledger Table -->
+        <section class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
+                <h3 class="font-bold text-slate-900">Grease Trap Service & Manifest Ledger</h3>
+                <span id="recordCountText" class="text-xs text-slate-500">Syncing client history...</span>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-500 text-xs font-semibold uppercase tracking-wider border-b border-slate-200">
+                            <th class="py-3 px-6">Service Date</th>
+                            <th class="py-3 px-6">Manifest ID</th>
+                            <th class="py-3 px-6">Hauler Name</th>
+                            <th class="py-3 px-6">FOG Depth</th>
+                            <th class="py-3 px-6 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="serviceLedgerBody" class="divide-y divide-slate-100 text-sm">
+                        <tr>
+                            <td colspan="5" class="py-6 px-6 text-center text-slate-400 italic">Loading client records...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Manifest Receipt Modal -->
+    <div id="manifestModal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-4 z-50 print:hidden">
+        <div class="bg-white rounded-xl max-w-2xl w-full p-6 shadow-xl space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 id="modalTitle" class="font-bold text-slate-900">Manifest Receipt & Evidence</h3>
+                <button onclick="closeManifestModal()" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-lg text-sm border border-slate-100">
+                <div><span class="text-slate-400 text-xs block">Hauler</span><strong id="modalHauler" class="text-slate-800">--</strong></div>
+                <div><span class="text-slate-400 text-xs block">FOG Depth</span><strong id="modalFog" class="text-slate-800">--</strong></div>
+                <div><span class="text-slate-400 text-xs block">Service Date</span><strong id="modalDate" class="text-slate-800">--</strong></div>
+                <div><span class="text-slate-400 text-xs block">Manifest ID</span><strong id="modalManifest" class="text-slate-800">--</strong></div>
+            </div>
+
+            <div>
+                <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Verified Documents</h4>
+                <div id="modalDocuments" class="flex flex-wrap gap-2">
+                    <!-- PDF/Document links injected here -->
+                </div>
+            </div>
+
+            <div>
+                <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Service Photos & Visual Evidence</h4>
+                <div id="modalPhotos" class="flex flex-wrap gap-2">
+                    <!-- Photo links injected here -->
+                </div>
+            </div>
+
+            <div>
+                <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Service Notes</h4>
+                <p id="modalNotes" class="text-xs text-slate-600 bg-slate-50 p-3 rounded border">No notes recorded.</p>
+            </div>
+
+            <div class="flex justify-between items-center pt-3 border-t">
+                <button onclick="downloadJSONBundle()" class="px-3 py-1.5 bg-blue-50 text-blue-600 border border-blue-200 hover:bg-blue-100 rounded text-xs font-medium transition">
+                    📦 Download Record Bundle (PDF)
+                </button>
+                <button onclick="closeManifestModal()" class="px-4 py-2 bg-slate-800 text-white rounded text-sm font-medium hover:bg-slate-700">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // HARDCODED CONFIGURATION & TARGET CLIENT
+        // ==========================================
+        const CONFIG = {
+            token: "patouj78Y5wmGU6Bi.82a5754c2bd2d526b448e42ab046e84f1cafbba9dc1b25d493b9d41db542924c",             // Your Airtable Personal Access Token
+            baseId: "apphByKyDgttZFCxX",              // Your Airtable Base ID
+            profileTable: "tblKS1VEKkNRFyEfK",    // Table ID for Business Profile tab
+            profileRecordId: "recYhga7R8hlbfTxf",     // Exact row ID for the active business profile
+            ledgerTable: "tblc55Vhp1wevrg7Y",         // Table ID for Service Records tab
+            targetClient: "Acme Corp"                 // Target client name for filtering
+        };
+
+        let allServiceRecords = [];
+        let currentRecordData = null;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (CONFIG.token && CONFIG.baseId) {
+                fetchDashboardData();
+            }
+        });
+
+        function openManifestModal(index) {
+            const record = allServiceRecords[index];
+            if (!record) return;
+            
+            const f = record.fields;
+            const manifest = getFieldByKeyword(f, 'Manifest ID', 'Manifest') || 'N/A';
+            const hauler = getFieldByKeyword(f, 'Hauler Name', 'Hauler') || 'N/A';
+            const fog = getFieldByKeyword(f, 'FOG Depth', 'FOG') ? `${getFieldByKeyword(f, 'FOG Depth', 'FOG')} Inches` : 'N/A';
+            const date = getFieldByKeyword(f, 'Service Date', 'Date') || 'N/A';
+            const notes = getFieldByKeyword(f, 'Notes', 'Remarks') || 'No notes recorded.';
+
+            currentRecordData = { manifest, hauler, fog, date, notes };
+
+            document.getElementById('modalTitle').innerText = `Manifest Receipt (${manifest})`;
+            document.getElementById('modalHauler').innerText = hauler;
+            document.getElementById('modalFog').innerText = fog;
+            document.getElementById('modalDate').innerText = date;
+            document.getElementById('modalManifest').innerText = manifest;
+            document.getElementById('modalNotes').innerText = notes;
+
+            // Separate Documents and Photos containers
+            const docsContainer = document.getElementById('modalDocuments');
+            const photosContainer = document.getElementById('modalPhotos');
+            docsContainer.innerHTML = '';
+            photosContainer.innerHTML = '';
+
+            let docCount = 0;
+            let photoCount = 0;
+
+            for (const key of Object.keys(f)) {
+                if (Array.isArray(f[key]) && f[key].length > 0 && f[key][0].url) {
+                    f[key].forEach(file => {
+                        const filename = file.filename.toLowerCase();
+                        const fieldKey = key.toLowerCase();
+                        
+                        // Determine if it's a photo or a document based on file type or field name
+                        const isPhoto = filename.endsWith('.jpg') || filename.endsWith('.jpeg') || filename.endsWith('.png') || filename.endsWith('.avif') || filename.endsWith('.webp') || fieldKey.includes('photo');
+
+                        const fileLink = document.createElement('a');
+                        fileLink.href = file.url;
+                        fileLink.target = "_blank";
+                        fileLink.className = "text-xs bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-700 px-3 py-2 rounded flex items-center gap-2 border transition";
+
+                        if (isPhoto) {
+                            photoCount++;
+                            fileLink.innerHTML = `📷 <span>${key}: ${file.filename}</span>`;
+                            photosContainer.appendChild(fileLink);
+                        } else {
+                            docCount++;
+                            fileLink.innerHTML = `📄 <span>${key}: ${file.filename}</span>`;
+                            docsContainer.appendChild(fileLink);
+                        }
+                    });
+                }
+            }
+
+            if (docCount === 0) {
+                docsContainer.innerHTML = `<span class="text-xs text-slate-400 italic">No documents attached.</span>`;
+            }
+            if (photoCount === 0) {
+                photosContainer.innerHTML = `<span class="text-xs text-slate-400 italic">No photos attached.</span>`;
+            }
+
+            document.getElementById('manifestModal').classList.remove('hidden');
+        }
+
+        function closeManifestModal() {
+            document.getElementById('manifestModal').classList.add('hidden');
+        }
+
+        async function downloadJSONBundle() {
+            if (!currentRecordData) return;
+
+            // Helper to convert images to safe JPEGs via canvas
+            async function getNormalizedJpegBase64(url) {
+                return new Promise((resolve) => {
+                    const img = new Image();
+                    img.crossOrigin = "anonymous";
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0);
+                        resolve(canvas.toDataURL('image/jpeg', 0.85));
+                    };
+                    img.onerror = () => resolve(null);
+                    img.src = url;
+                });
+            }
+
+            const btn = event.target;
+            const originalText = btn.innerText;
+            btn.innerText = "⏳ Compiling PDF Bundle...";
+
+            let imageDefinitions = [];
+            let documentDefinitions = [];
+
+            const record = allServiceRecords.find(r => {
+                const manifest = getFieldByKeyword(r.fields, 'Manifest ID', 'Manifest');
+                return String(manifest) === String(currentRecordData.manifest);
+            });
+
+            if (record) {
+                for (const key of Object.keys(record.fields)) {
+                    const val = record.fields[key];
+                    if (Array.isArray(val) && val.length > 0 && val[0].url) {
+                        for (const file of val) {
+                            const filename = file.filename.toLowerCase();
+                            const isPhoto = filename.endsWith('.jpg') || filename.endsWith('.jpeg') || filename.endsWith('.png') || filename.endsWith('.avif') || filename.endsWith('.webp') || key.toLowerCase().includes('photo');
+                            
+                            if (isPhoto) {
+                                const jpegBase64 = await getNormalizedJpegBase64(file.url);
+                                if (jpegBase64) {
+                                    imageDefinitions.push({
+                                        text: `${key}: ${file.filename}`,
+                                        fontSize: 9,
+                                        color: '#64748B',
+                                        margin: [0, 5, 0, 2]
+                                    });
+                                    imageDefinitions.push({
+                                        image: jpegBase64,
+                                        width: 200,
+                                        margin: [0, 0, 0, 15]
+                                    });
+                                }
+                            } else {
+                                // Collect PDFs and documents with clickable links
+                                documentDefinitions.push({
+                                    text: `📄 ${key}: ${file.filename} (Click to View)`,
+                                    fontSize: 10,
+                                    color: '#2563EB',
+                                    link: file.url,
+                                    decoration: 'underline',
+                                    margin: [0, 2, 0, 4]
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+
+            const docDefinition = {
+                content: [
+                    { text: `FOG Compliance Record Bundle`, fontSize: 18, bold: true, color: '#0F172A', margin: [0, 0, 0, 5] },
+                    { text: `Manifest ID: ${currentRecordData.manifest}`, fontSize: 12, bold: true, color: '#2563EB', margin: [0, 0, 0, 15] },
+                    
+                    {
+                        table: {
+                            widths: ['*', '*', '*', '*'],
+                            body: [
+                                [
+                                    { text: 'Service Date', bold: true, fillColor: '#F8FAFC', fontSize: 10 },
+                                    { text: currentRecordData.date, fontSize: 10 },
+                                    { text: 'Hauler Name', bold: true, fillColor: '#F8FAFC', fontSize: 10 },
+                                    { text: currentRecordData.hauler, fontSize: 10 }
+                                ],
+                                [
+                                    { text: 'FOG Depth', bold: true, fillColor: '#F8FAFC', fontSize: 10 },
+                                    { text: currentRecordData.fog, fontSize: 10 },
+                                    { text: 'Client', bold: true, fillColor: '#F8FAFC', fontSize: 10 },
+                                    { text: CONFIG.targetClient, fontSize: 10 }
+                                ]
+                            ]
+                        },
+                        margin: [0, 0, 0, 15]
+                    },
+
+                    { text: 'Service Notes:', bold: true, fontSize: 11, color: '#334155', margin: [0, 0, 0, 5] },
+                    { text: currentRecordData.notes, fontSize: 10, color: '#475569', margin: [0, 0, 0, 15] },
+
+                    // Verified Documents Section
+                    { text: 'Verified Documents & Manifests:', bold: true, fontSize: 12, color: '#0F172A', margin: [0, 5, 0, 5] },
+                    documentDefinitions.length > 0 ? documentDefinitions : { text: 'No documents attached.', italic: true, fontSize: 10, color: '#94A3B8' },
+                    { text: '', margin: [0, 0, 0, 10] },
+
+                    // Visual Evidence Section
+                    { text: 'Attached Visual Evidence & Photos:', bold: true, fontSize: 12, color: '#0F172A', margin: [0, 5, 0, 5] },
+                    imageDefinitions.length > 0 ? imageDefinitions : { text: 'No photos attached.', italic: true, fontSize: 10, color: '#94A3B8' }
+                ]
+            };
+
+            pdfMake.createPdf(docDefinition).download(`Manifest_${currentRecordData.manifest}_Bundle.pdf`);
+            btn.innerText = originalText;
+        }
+
+        const getFieldByKeyword = (fields, ...keywords) => {
+            for (const kw of keywords) {
+                // Pass 1: Look for an exact match first (ignoring file attachments for IDs)
+                for (const key of Object.keys(fields)) {
+                    if (key.toLowerCase() === kw.toLowerCase()) {
+                        const val = fields[key];
+                        if (val !== undefined && val !== null) {
+                            if (Array.isArray(val)) {
+                                if (kw.toLowerCase().includes('id')) continue; // Skip arrays if looking for an ID
+                                if (val.length === 0) return 'N/A';
+                                if (typeof val[0] === 'object') return val[0].name || val[0].filename || val[0].value || 'N/A';
+                                return val.join(', ');
+                            }
+                            if (typeof val === 'object') return val.name || val.filename || val.value || 'N/A';
+                            return val;
+                        }
+                    }
+                }
+            }
+
+            // Pass 2: Fallback partial match
+            for (const key of Object.keys(fields)) {
+                for (const kw of keywords) {
+                    if (key.toLowerCase().includes(kw.toLowerCase())) {
+                        const val = fields[key];
+                        if (val !== undefined && val !== null) {
+                            if (Array.isArray(val)) {
+                                if (kw.toLowerCase().includes('id')) continue; // Skip arrays for ID fields
+                                if (val.length === 0) continue;
+                                if (typeof val[0] === 'object') return val[0].name || val[0].filename || val[0].value || 'N/A';
+                                return val.join(', ');
+                            }
+                            if (typeof val === 'object') return val.name || val.filename || val.value || 'N/A';
+                            return val;
+                        }
+                    }
+                }
+            }
+            return 'N/A';
+        };
+
+        async function fetchDashboardData() {
+            const headers = {
+                'Authorization': `Bearer ${CONFIG.token}`,
+                'Content-Type': 'application/json'
+            };
+
+            const profileUrl = `https://api.airtable.com/v0/${CONFIG.baseId}/${encodeURIComponent(CONFIG.profileTable)}/${CONFIG.profileRecordId}`;
+            const filterFormula = encodeURIComponent(`{Client} = '${CONFIG.targetClient}'`);
+            const ledgerUrl = `https://api.airtable.com/v0/${CONFIG.baseId}/${encodeURIComponent(CONFIG.ledgerTable)}?filterByFormula=${filterFormula}`;
+
+            try {
+                // Fetch profile data sequentially
+                const profileRes = await fetch(profileUrl, { headers });
+                if (!profileRes.ok) throw new Error("Failed to fetch static business profile table.");
+                const profileData = await profileRes.json();
+
+                // Fetch ledger data sequentially
+                const ledgerRes = await fetch(ledgerUrl, { headers });
+                if (!ledgerRes.ok) throw new Error("Failed to fetch service ledger table.");
+                const ledgerData = await ledgerRes.json();
+
+                // 1. Populate Static Business Profile Header
+                const pFields = profileData.fields || {};
+                const bizName = getFieldByKeyword(pFields, 'Legal Name', 'Business Name', 'Company');
+                const license = getFieldByKeyword(pFields, 'Business License', 'License');
+                const contact = getFieldByKeyword(pFields, 'Primary Contact', 'Contact');
+                const email = getFieldByKeyword(pFields, 'Primary Email', 'Email');
+                const phone = getFieldByKeyword(pFields, 'Primary Phone', 'Phone');
+                const address = getFieldByKeyword(pFields, 'Service Address', 'Location');
+
+                if (bizName) document.getElementById('bizName').innerText = bizName;
+                if (address) document.getElementById('bizAddress').innerText = address;
+                if (phone) document.getElementById('bizPhone').innerText = phone;
+                if (email) document.getElementById('bizEmail').innerText = email;
+                if (contact) document.getElementById('bizContact').innerText = contact;
+                if (license) document.getElementById('bizLicense').innerText = license;
+
+                // 2. Populate Filtered Service Ledger Records
+                allServiceRecords = (ledgerData.records || []).filter(r => Object.keys(r.fields || {}).length > 0);
+                
+                if (allServiceRecords.length > 0) {
+                    const latest = allServiceRecords[0].fields;
+                    const lastDate = getFieldByKeyword(latest, 'Service Date', 'Date');
+                    const mainHauler = getFieldByKeyword(latest, 'Hauler Name', 'Hauler');
+
+                    if (lastDate) document.getElementById('kpiLastDate').innerText = lastDate;
+                    if (mainHauler) document.getElementById('kpiHaulerSub').innerText = `Hauler: ${mainHauler}`;
+                }
+
+                const tbody = document.getElementById('serviceLedgerBody');
+                tbody.innerHTML = ''; 
+
+                if (allServiceRecords.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" class="py-6 px-6 text-center text-slate-400 italic">No service records found for ${CONFIG.targetClient}.</td></tr>`;
+                    document.getElementById('recordCountText').innerText = `Showing 0 records`;
+                    return;
+                }
+
+                allServiceRecords.forEach((record, index) => {
+                    const f = record.fields;
+                    const date = getFieldByKeyword(f, 'Service Date', 'Date') || 'N/A';
+                    const manifest = getFieldByKeyword(f, 'Manifest ID', 'Manifest') || 'N/A';
+                    const hauler = getFieldByKeyword(f, 'Hauler Name', 'Hauler') || 'N/A';
+                    const fogDepth = getFieldByKeyword(f, 'FOG Depth', 'FOG') ? `${getFieldByKeyword(f, 'FOG Depth', 'FOG')} In` : 'N/A';
+
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-slate-50/50';
+                    tr.innerHTML = `
+                        <td class="py-4 px-6 font-medium text-slate-900">${date}</td>
+                        <td class="py-4 px-6 font-mono text-slate-600">${manifest}</td>
+                        <td class="py-4 px-6 text-slate-600">${hauler}</td>
+                        <td class="py-4 px-6 text-slate-600">${fogDepth}</td>
+                        <td class="py-4 px-6 text-right">
+                            <button onclick="openManifestModal(${index})" class="text-blue-600 hover:text-blue-800 font-medium text-xs bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded transition">
+                                View Manifest & Evidence
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                document.getElementById('recordCountText').innerText = `Showing ${allServiceRecords.length} record(s) for ${CONFIG.targetClient}`;
+
+            } catch (error) {
+                console.error("Dashboard Fetch Error:", error);
+            }
+        }
+
+        async function generateMunicipalAuditPDF() {
+            if (!allServiceRecords || allServiceRecords.length === 0) {
+                alert("No records available to export.");
+                return;
+            }
+
+            const btn = event.target;
+            const originalText = btn.innerText;
+            btn.innerText = "⏳ Compiling Multi-Year Audit PDF...";
+
+            // Helper to convert images to safe JPEGs via canvas
+            async function getNormalizedJpegBase64(url) {
+                return new Promise((resolve) => {
+                    const img = new Image();
+                    img.crossOrigin = "anonymous";
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0);
+                        resolve(canvas.toDataURL('image/jpeg', 0.85));
+                    };
+                    img.onerror = () => resolve(null);
+                    img.src = url;
+                });
+            }
+
+            // Filter records for the last 2 years (or keep all if date is missing)
+            const twoYearsAgo = new Date();
+            twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2);
+
+            const filteredRecords = allServiceRecords.filter(r => {
+                const dateStr = getFieldByKeyword(r.fields, 'Service Date', 'Date');
+                if (!dateStr || dateStr === 'N/A') return true;
+                const recordDate = new Date(dateStr);
+                return isNaN(recordDate) || recordDate >= twoYearsAgo;
+            });
+
+            // Build summary table header
+            const summaryTableBody = [
+                [
+                    { text: 'Service Date', bold: true, fillColor: '#F8FAFC', fontSize: 9 },
+                    { text: 'Manifest ID', bold: true, fillColor: '#F8FAFC', fontSize: 9 },
+                    { text: 'Hauler Name', bold: true, fillColor: '#F8FAFC', fontSize: 9 },
+                    { text: 'FOG Depth', bold: true, fillColor: '#F8FAFC', fontSize: 9 }
+                ]
+            ];
+
+            let detailedSections = [];
+
+            for (const [index, record] of filteredRecords.entries()) {
+                const f = record.fields;
+                const manifest = getFieldByKeyword(f, 'Manifest ID', 'Manifest') || 'N/A';
+                const hauler = getFieldByKeyword(f, 'Hauler Name', 'Hauler') || 'N/A';
+                const fog = getFieldByKeyword(f, 'FOG Depth', 'FOG') ? `${getFieldByKeyword(f, 'FOG Depth', 'FOG')} Inches` : 'N/A';
+                const date = getFieldByKeyword(f, 'Service Date', 'Date') || 'N/A';
+                const notes = getFieldByKeyword(f, 'Notes', 'Remarks') || 'No notes recorded.';
+
+                // Add row to executive summary table
+                summaryTableBody.push([
+                    { text: date, fontSize: 8 },
+                    { text: manifest, fontSize: 8 },
+                    { text: hauler, fontSize: 8 },
+                    { text: fog, fontSize: 8 }
+                ]);
+
+                let imageDefinitions = [];
+                let documentDefinitions = [];
+
+                for (const key of Object.keys(f)) {
+                    const val = f[key];
+                    if (Array.isArray(val) && val.length > 0 && val[0].url) {
+                        for (const file of val) {
+                            const filename = file.filename.toLowerCase();
+                            const isPhoto = filename.endsWith('.jpg') || filename.endsWith('.jpeg') || filename.endsWith('.png') || filename.endsWith('.avif') || filename.endsWith('.webp') || key.toLowerCase().includes('photo');
+                            
+                            if (isPhoto) {
+                                const jpegBase64 = await getNormalizedJpegBase64(file.url);
+                                if (jpegBase64) {
+                                    imageDefinitions.push({ text: `${key}: ${file.filename}`, fontSize: 8, color: '#64748B', margin: [0, 4, 0, 1] });
+                                    imageDefinitions.push({ image: jpegBase64, width: 160, margin: [0, 0, 0, 10] });
+                                }
+                            } else {
+                                documentDefinitions.push({
+                                    text: `📄 ${key}: ${file.filename}`,
+                                    fontSize: 9,
+                                    color: '#2563EB',
+                                    link: file.url,
+                                    decoration: 'underline',
+                                    margin: [0, 1, 0, 3]
+                                });
+                            }
+                        }
+                    }
+                }
+
+                // Add detailed section per record with page break for neatness
+                detailedSections.push(
+                    { text: `Service Record #${index + 1} — Manifest ID: ${manifest}`, fontSize: 13, bold: true, color: '#1E293B', margin: [0, 20, 0, 6], pageBreak: index > 0 ? 'before' : undefined },
+                    {
+                        table: {
+                            widths: ['*', '*', '*', '*'],
+                            body: [
+                                [
+                                    { text: 'Service Date', bold: true, fillColor: '#F8FAFC', fontSize: 9 },
+                                    { text: date, fontSize: 9 },
+                                    { text: 'Hauler Name', bold: true, fillColor: '#F8FAFC', fontSize: 9 },
+                                    { text: hauler, fontSize: 9 }
+                                ],
+                                [
+                                    { text: 'FOG Depth', bold: true, fillColor: '#F8FAFC', fontSize: 9 },
+                                    { text: fog, fontSize: 9 },
+                                    { text: 'Client', bold: true, fillColor: '#F8FAFC', fontSize: 9 },
+                                    { text: CONFIG.targetClient, fontSize: 9 }
+                                ]
+                            ]
+                        },
+                        margin: [0, 0, 0, 8]
+                    },
+                    { text: `Service Notes: ${notes}`, fontSize: 9, color: '#475569', margin: [0, 0, 0, 8] },
+                    { text: 'Verified Documents:', bold: true, fontSize: 10, color: '#0F172A', margin: [0, 2, 0, 2] },
+                    documentDefinitions.length > 0 ? documentDefinitions : { text: 'No documents attached.', italic: true, fontSize: 9, color: '#94A3B8' },
+                    { text: 'Attached Visual Evidence:', bold: true, fontSize: 10, color: '#0F172A', margin: [0, 6, 0, 2] },
+                    imageDefinitions.length > 0 ? imageDefinitions : { text: 'No photos attached.', italic: true, fontSize: 9, color: '#94A3B8' }
+                );
+            }
+
+            const docDefinition = {
+                content: [
+                    { text: `Municipal FOG Compliance Audit Report`, fontSize: 20, bold: true, color: '#0F172A', margin: [0, 0, 0, 2] },
+                    { text: `Facility: ${CONFIG.targetClient} | Audit Window: Past 2 Years / Complete Ledger`, fontSize: 11, color: '#2563EB', margin: [0, 0, 0, 12] },
+                    
+                    { text: `Executive Master Ledger Summary`, fontSize: 14, bold: true, color: '#1E293B', margin: [0, 0, 0, 6] },
+                    {
+                        table: {
+                            widths: [100, 120, 150, 100],
+                            body: summaryTableBody
+                        },
+                        margin: [0, 0, 0, 20]
+                    },
+
+                    ...detailedSections
+                ],
+                footer: function(currentPage, pageCount) {
+                    return { text: `Page ${currentPage} of ${pageCount} — Municipal FOG Compliance Audit Report`, alignment: 'center', fontSize: 8, color: '#94A3B8', margin: [0, 10, 0, 0] };
+                }
+            };
+
+            pdfMake.createPdf(docDefinition).download(`${CONFIG.targetClient.replace(/\s+/g, '_')}_Municipal_Audit_Report.pdf`);
+            btn.innerText = originalText;
+        }
+    </script>
+</body>
+</html>
