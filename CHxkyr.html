@@ -442,6 +442,13 @@
 
                 // 2. Populate Filtered Service Ledger Records
                 allServiceRecords = (ledgerData.records || []).filter(r => Object.keys(r.fields || {}).length > 0);
+
+                // Sort records by Service Date (newest first)
+                allServiceRecords.sort((a, b) => {
+                    const dateA = new Date(getFieldByKeyword(a.fields, 'Service Date', 'Date') || 0);
+                    const dateB = new Date(getFieldByKeyword(b.fields, 'Service Date', 'Date') || 0);
+                    return dateB - dateA; // Use (dateA - dateB) if you want oldest first
+                });
                 
                 if (allServiceRecords.length > 0) {
                     const latest = allServiceRecords[0].fields;
